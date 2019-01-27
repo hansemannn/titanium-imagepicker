@@ -1,0 +1,22 @@
+apply plugin: 'java'
+
+repositories {
+	maven { url 'https://jitpack.io' }
+	jcenter()
+}
+
+dependencies {
+    implementation 'com.zhihu.android:matisse:0.5.1'
+		implementation 'com.squareup.picasso:picasso:2.5.1'
+		implementation 'it.sephiroth.android.library.imagezoom:imagezoom:+'
+
+}
+
+configurations.all {
+  transitive = false
+}
+
+task getDeps(type: Copy) {
+	from sourceSets.main.runtimeClasspath
+	into 'lib/'
+}

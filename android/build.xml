@@ -1,6 +1,6 @@
-<project name="imagepicker" default="dist">
+<project name="titanium-imagepicker" default="dist">
 	<description>
-		Ant build script for Titanium Android module imagepicker
+		Ant build script for Titanium Android module titanium-imagepicker
 	</description>
 
 	<property name="ti.module.root" location="${basedir}"/>
