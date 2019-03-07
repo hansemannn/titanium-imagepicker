@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="matisse-0.5.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/android/_jar/matisse-0.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

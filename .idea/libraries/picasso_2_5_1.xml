@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="picasso-2.5.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/android/_jar/picasso-2.5.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
