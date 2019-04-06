@@ -32,6 +32,8 @@ class TiImagepickerModule: TiModule {
   func openGallery(arguments: Array<Any>?) {
     guard let arguments = arguments, let options = arguments[0] as? [String: Any] else { return }
     guard let callback: KrollCallback = options["callback"] as? KrollCallback else { return }
+    
+    let forceSquare = options["forceSquare"] as? Bool ?? false
 
     var config = YPImagePickerConfiguration()
 
@@ -40,6 +42,8 @@ class TiImagepickerModule: TiModule {
     config.startOnScreen = .library
     config.screens = [.library, .photo]
     config.shouldSaveNewPicturesToAlbum = false
+    config.onlySquareImagesFromCamera = forceSquare
+    config.library.onlySquare = forceSquare
 
     // General (optional) config
     config.library.numberOfItemsInRow = options["columnCount"] as? Int ?? 3

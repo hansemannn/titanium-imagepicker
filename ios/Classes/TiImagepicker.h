@@ -2,8 +2,8 @@
 //  TiImagepicker.h
 //  titanium-imagepicker
 //
-//  Created by Your Name
-//  Copyright (c) 2019 Your Company. All rights reserved.
+//  Created by Hans Knöchel
+//  Copyright (c) 2019 Lambus GmbH. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

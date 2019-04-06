@@ -25,11 +25,12 @@ This started as a parity effort via [@prashantsaini1/titanium-imagepicker](https
 | Argument              | Description           | Default Value              | Platform |
 | --------------------- | --------------------- | ------------------------- | ----- |
 | String **doneButtonTitle**    | Title of the OK button which calls the callback method    | Done | Android, iOS |
-| String **nextButtonTitle**    | Title of the "Next" button    | Done | iOS |
-| String **cancelButtonTitle**    | Title of the "Cancel" button    | Done | iOS |
-| String **cameraTitle**    | Title of the "Photo" button    | Done | iOS |
-| String **libraryTitle**    | Title of the "Library" button    | Done | iOS |
-| String **albumsTitle**    | Title of the "Albums" button    | Done | iOS |
+| String **nextButtonTitle**    | Title of the "Next" button    | Next | iOS |
+| String **cancelButtonTitle**    | Title of the "Cancel" button    | Cancel | iOS |
+| String **cameraTitle**    | Title of the "Photo" button    | Photo | iOS |
+| String **libraryTitle**    | Title of the "Library" button    | Library | iOS |
+| String **albumsTitle**    | Title of the "Albums" button    | Albums | iOS |
+| Bool **forceSquare**    | Force images to be squRE    | `false` | iOS |
 | int **columnCount**      |  Number of grid-view columns to show in gallery   | 3 (2 to 5 on Android, no limit on iOS) | , iOS |
 | int **maxImageSelection**     | Maximum number of images to select. Can be used for single image selection by passing as 1     | No limit | Android |
 | function **callback**    | Callback method to get results into. See below example for its usage    | none | Android, iOS |

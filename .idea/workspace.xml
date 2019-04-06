@@ -2,28 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e109b9f9-7f7a-40c1-bfe2-be84bf7d5490" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/imagezoom_2_3_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/kroll_apt.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/kroll_common.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/matisse_0_5_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/picasso_2_5_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/titanium.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.gradle/4.10.2/fileChanges/last-build.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.gradle/4.10.2/fileContent/fileContent.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.gradle/4.10.2/fileHashes/fileHashes.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.gradle/4.10.2/fileHashes/fileHashes.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.gradle/4.10.2/gc.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.gradle/4.10.2/taskHistory/taskHistory.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/.gradle/4.10.2/taskHistory/taskHistory.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/dist/ti.imagepicker-android-1.0.0.zip" beforeDir="false" afterPath="$PROJECT_DIR$/android/dist/ti.imagepicker-android-1.0.0.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/dist/titanium-imagepicker.jar" beforeDir="false" afterPath="$PROJECT_DIR$/android/dist/titanium-imagepicker.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/libs/arm64-v8a/libti.imagepicker.so" beforeDir="false" afterPath="$PROJECT_DIR$/android/libs/arm64-v8a/libti.imagepicker.so" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/libs/armeabi-v7a/libti.imagepicker.so" beforeDir="false" afterPath="$PROJECT_DIR$/android/libs/armeabi-v7a/libti.imagepicker.so" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/libs/x86/libti.imagepicker.so" beforeDir="false" afterPath="$PROJECT_DIR$/android/libs/x86/libti.imagepicker.so" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/ti/imagepicker/TitaniumImagepickerModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/ti/imagepicker/TitaniumImagepickerModule.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,9 +15,10 @@
     <session id="-1270568906">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="1" />
+          <entry key="project.closed" value="3" />
           <entry key="project.open.time.0" value="2" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.opened" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -67,8 +48,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/ti/imagepicker/TitaniumImagepickerModule.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="410">
-              <caret line="73" column="61" selection-start-line="73" selection-start-column="61" selection-end-line="73" selection-end-column="61" />
+            <state relative-caret-position="470">
+              <caret line="77" column="26" selection-start-line="77" selection-start-column="26" selection-end-line="77" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -98,6 +79,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -140,9 +122,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="AndroidView" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -215,8 +196,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/ti/imagepicker/TitaniumImagepickerModule.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="73" column="61" selection-start-line="73" selection-start-column="61" selection-end-line="73" selection-end-column="61" />
+        <state relative-caret-position="470">
+          <caret line="77" column="26" selection-start-line="77" selection-start-column="26" selection-end-line="77" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

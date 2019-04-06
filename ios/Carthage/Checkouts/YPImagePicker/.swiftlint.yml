@@ -1,0 +1,11 @@
+disabled_rules:
+- trailing_whitespace
+- variable_name
+- type_body_length
+- function_body_length
+- file_length
+- cyclomatic_complexity
+- function_parameter_count
+
+excluded:
+  - YPImagePickerExample/Localize.swift
