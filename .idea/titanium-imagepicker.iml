@@ -21,8 +21,8 @@
     <orderEntry type="library" name="imagezoom-2.3.0" level="project" />
     <orderEntry type="library" name="matisse-0.5.1" level="project" />
     <orderEntry type="library" name="picasso-2.5.1" level="project" />
-    <orderEntry type="library" name="titanium" level="project" />
     <orderEntry type="library" name="kroll-apt" level="project" />
     <orderEntry type="library" name="kroll-common" level="project" />
+    <orderEntry type="library" name="titanium" level="project" />
   </component>
 </module>
