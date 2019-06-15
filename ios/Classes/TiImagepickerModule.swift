@@ -83,6 +83,14 @@ class TiImagepickerModule: TiModule {
     if options["capturePhotoImage"] != nil {
       config.icons.capturePhotoImage = TiUtils.image(options["capturePhotoImage"], proxy: self)
     }
+    
+    if options["multipleSelectionOnIcon"] != nil {
+      config.icons.multipleSelectionOnIcon = TiUtils.image(options["multipleSelectionOnIcon"], proxy: self)
+    }
+
+    if options["multipleSelectionOffIcon"] != nil {
+      config.icons.multipleSelectionOffIcon = TiUtils.image(options["multipleSelectionOffIcon"], proxy: self)
+    }
 
     let picker = YPImagePicker(configuration: config)
 
