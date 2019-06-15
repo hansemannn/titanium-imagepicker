@@ -24,17 +24,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.zhihu.matisse.Matisse;
@@ -66,26 +64,37 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 		support.launchActivityForResult(matisseIntent, requestCode, this);
 	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
 	public void onResult(Activity activity, int thisRequestCode, int resultCode, Intent data)
 	{
 		if (callback == null) return;
 
 		if (thisRequestCode == requestCode && data != null) {
-			List<String> paths = Matisse.obtainPathResult(data);
-			ArrayList<TiBlob> images = new ArrayList<>();
+			final List<String> paths = Matisse.obtainPathResult(data);
+			final ArrayList<TiBlob> images = new ArrayList<>();
 
-			for (String url : paths) {
-				TiBlob image = computeBitmap(url);
-				if (image == null) continue;
-				images.add(image);
-			}
+			AsyncTask.execute(new Runnable() {
+				@Override
+				public void run() {
+					for (String url : paths) {
+						TiBlob image = computeBitmap(url);
+						if (image == null) continue;
+						images.add(image);
+					}
 
-			KrollDict event = new KrollDict();
-			event.put("success", true);
-			event.put("images", images.toArray());
 
-			callback.callAsync(getKrollObject(), event);
+					final KrollDict event = new KrollDict();
+					event.put("success", true);
+					event.put("images", images.toArray());
+
+					runOnMainThread(new Runnable() {
+						public void run() {
+							callback.callAsync(getKrollObject(), event);
+						}
+					});
+				}
+			});
 		} else {
 			KrollDict event = new KrollDict();
 			event.put("success", false);
