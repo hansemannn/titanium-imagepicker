@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
+import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 public class TiMatisseActivity extends Activity {
 	
@@ -25,6 +26,8 @@ public class TiMatisseActivity extends Activity {
         
         Matisse.from(this)
             .choose(MimeType.ofImage())
+            .capture(true)
+            .captureStrategy(new CaptureStrategy(true, "io.lambus.app.provider"))
             .countable(true)
             .maxSelectable(maxImageSelection)
             .imageEngine(new PicassoEngine())

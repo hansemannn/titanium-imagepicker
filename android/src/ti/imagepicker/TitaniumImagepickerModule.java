@@ -72,27 +72,31 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 
 		if (thisRequestCode == requestCode && data != null) {
 			final List<String> paths = Matisse.obtainPathResult(data);
-			final ArrayList<TiBlob> images = new ArrayList<>();
 
 			AsyncTask.execute(new Runnable() {
 				@Override
 				public void run() {
-					for (String url : paths) {
+					for (int i = 0; i < paths.size(); i++) {
+						String url = paths.get(i);
+
+						final ArrayList<TiBlob> images = new ArrayList<>();
+
 						TiBlob image = computeBitmap(url);
 						if (image == null) continue;
 						images.add(image);
+
+						final KrollDict event = new KrollDict();
+						event.put("success", true);
+						event.put("image", image);
+						event.put("length", paths.size());
+						event.put("index", i);
+
+						runOnMainThread(new Runnable() {
+							public void run() {
+								callback.callAsync(getKrollObject(), event);
+							}
+						});
 					}
-
-
-					final KrollDict event = new KrollDict();
-					event.put("success", true);
-					event.put("images", images.toArray());
-
-					runOnMainThread(new Runnable() {
-						public void run() {
-							callback.callAsync(getKrollObject(), event);
-						}
-					});
 				}
 			});
 		} else {

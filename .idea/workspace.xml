@@ -2,20 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e109b9f9-7f7a-40c1-bfe2-be84bf7d5490" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/kroll_apt.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/kroll_apt.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/kroll_common.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/kroll_common.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/titanium.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/titanium.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/titanium-imagepicker.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/titanium-imagepicker.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/dist/ti.imagepicker-android-1.0.0.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/dist/titanium-imagepicker.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/java-sources.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/java-sources.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/libs/arm64-v8a/libti.imagepicker.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/libs/armeabi-v7a/libti.imagepicker.so" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/libs/x86/libti.imagepicker.so" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/dist/ti.imagepicker-android-1.0.0.zip" beforeDir="false" afterPath="$PROJECT_DIR$/android/dist/ti.imagepicker-android-1.0.0.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/dist/titanium-imagepicker.jar" beforeDir="false" afterPath="$PROJECT_DIR$/android/dist/titanium-imagepicker.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/ti/imagepicker/TitaniumImagepickerModule.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/ti/imagepicker/TitaniumImagepickerModule.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/TiImagepickerModule.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/TiImagepickerModule.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/titanium-imagepicker.xcodeproj/project.xcworkspace/xcuserdata/hans.xcuserdatad/UserInterfaceState.xcuserstate" beforeDir="false" afterPath="$PROJECT_DIR$/ios/titanium-imagepicker.xcodeproj/project.xcworkspace/xcuserdata/hans.xcuserdatad/UserInterfaceState.xcuserstate" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,12 +17,13 @@
     <session id="-1270568906">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="7" />
+          <entry key="project.closed" value="14" />
           <entry key="project.open.time.0" value="5" />
           <entry key="project.open.time.2" value="1" />
-          <entry key="project.open.time.3" value="1" />
+          <entry key="project.open.time.3" value="2" />
+          <entry key="project.open.time.4" value="6" />
           <entry key="project.open.time.6" value="1" />
-          <entry key="project.opened" value="8" />
+          <entry key="project.opened" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -49,12 +40,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="599" />
+          <entry key="java" value="759" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="599" />
+          <entry key="JAVA" value="759" />
         </counts>
       </usages-collector>
     </session>
@@ -64,12 +55,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/ti/imagepicker/TitaniumImagepickerModule.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="86" column="26" selection-start-line="86" selection-start-column="26" selection-end-line="86" selection-end-column="26" />
+            <state relative-caret-position="-6">
+              <caret line="66" column="45" lean-forward="true" selection-start-line="66" selection-start-column="45" selection-end-line="66" selection-end-column="45" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3001#3002#0" expanded="true" />
-                <element signature="e#3061#3062#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -92,7 +81,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="23" />
     <option name="width" value="1680" />
     <option name="height" value="950" />
@@ -102,9 +91,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="AndroidView" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -147,6 +133,9 @@
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView" />
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -187,7 +176,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.33394384" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.33394384" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -200,7 +189,7 @@
       <window_info anchor="bottom" id="Terminal" order="3" />
       <window_info anchor="bottom" id="Event Log" order="4" side_tool="true" />
       <window_info anchor="bottom" id="Android Profiler" order="5" show_stripe_button="false" />
-      <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
+      <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" weight="0.31929183" />
       <window_info anchor="right" id="Capture Analysis" order="1" />
       <window_info anchor="right" id="Theme Preview" order="2" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
@@ -220,12 +209,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/ti/imagepicker/TitaniumImagepickerModule.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="86" column="26" selection-start-line="86" selection-start-column="26" selection-end-line="86" selection-end-column="26" />
+        <state relative-caret-position="-6">
+          <caret line="66" column="45" lean-forward="true" selection-start-line="66" selection-start-column="45" selection-end-line="66" selection-end-column="45" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3001#3002#0" expanded="true" />
-            <element signature="e#3061#3062#0" expanded="true" />
           </folding>
         </state>
       </provider>
