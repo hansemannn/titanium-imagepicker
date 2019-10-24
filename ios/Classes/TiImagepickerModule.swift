@@ -38,12 +38,14 @@ class TiImagepickerModule: TiModule {
     var config = YPImagePickerConfiguration()
 
     // Some hardcoded values that may become configurable in the future
-    config.showsFilters = false
+    config.showsPhotoFilters = false
     config.startOnScreen = .library
     config.screens = [.library, .photo]
     config.shouldSaveNewPicturesToAlbum = false
     config.onlySquareImagesFromCamera = forceSquare
     config.library.onlySquare = forceSquare
+    config.showsCrop = .none
+    config.targetImageSize = YPImageSize.original
 
     // General (optional) config
     config.library.numberOfItemsInRow = options["columnCount"] as? Int ?? 3
@@ -125,6 +127,6 @@ class TiImagepickerModule: TiModule {
   }
   
   private func blob(from image: UIImage) -> TiBlob {
-    return TiBlob()._init(withPageContext: self.pageContext, andImage: image)
+    return TiBlob(image: image)
   }
 }

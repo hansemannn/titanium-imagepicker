@@ -64,6 +64,8 @@ extension YPPhotoCapture {
                     self?.session.startRunning()
                     completion()
                     self?.tryToSetupPreview()
+                @unknown default:
+                    fatalError()
                 }
             }
         }
@@ -103,9 +105,12 @@ extension YPPhotoCapture {
     
     // MARK: - Flip
     
-    func flipCamera() {
+    func flipCamera(completion: @escaping () -> Void) {
         sessionQueue.async { [weak self] in
             self?.flip()
+            DispatchQueue.main.async {
+                completion()
+            }
         }
     }
     

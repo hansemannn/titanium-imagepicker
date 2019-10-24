@@ -6,6 +6,7 @@
 //  Copyright © 2018 Yummypets. All rights reserved.
 //
 
+import UIKit
 import Foundation
 import Photos
 
