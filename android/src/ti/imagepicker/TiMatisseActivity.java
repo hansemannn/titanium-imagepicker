@@ -1,14 +1,11 @@
 package ti.imagepicker;
 
-import org.appcelerator.kroll.common.Log;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 

@@ -48,8 +48,7 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 	protected int requestCode;
 
 	@Kroll.method(runOnUiThread = true)
-	public void openGallery(KrollDict args)
-	{
+	public void openGallery(KrollDict args) {
 		callback = (KrollFunction) args.get("callback");
 
 		Activity activity = TiApplication.getInstance().getCurrentActivity();
@@ -66,8 +65,7 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
-	public void onResult(Activity activity, int thisRequestCode, int resultCode, Intent data)
-	{
+	public void onResult(Activity activity, int thisRequestCode, int resultCode, Intent data) {
 		if (callback == null) return;
 
 		if (thisRequestCode == requestCode && data != null) {
@@ -109,35 +107,27 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 
 	@TargetApi(Build.VERSION_CODES.ECLAIR)
 	private TiBlob computeBitmap(String url) {
-		ExifInterface exif = null;
-
 		try {
-			exif = new ExifInterface(url);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(TiApplication.getInstance().getContentResolver(), Uri.fromFile(new File(url)));
-
+			File file = new File(url);
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(TiApplication.getInstance().getContentResolver(), Uri.fromFile(file));
+            
+            int orientation = Utils.getOrientation(file);
 			bitmap = rotateBitmap(bitmap, orientation);
+			
 			TiBlob blob = TiBlob.blobFromImage(bitmap);
 			bitmap = null;
-
 			return blob;
 		} catch (IOException ex) {
-			Log.e(LCAT, "Cannot receive bitmap at path = " + url);
+			Log.d(LCAT, "Cannot receive bitmap at path = " + url);
 		} catch (OutOfMemoryError ex) {
-			Log.e(LCAT, "Memory error while decoding image bitmap at path = " + url);
+			Log.d(LCAT, "Memory error while decoding image bitmap at path = " + url);
 		}
 
 		return null;
 	}
 
 	@Override
-	public void onError(Activity activity, int requestCode, Exception e)
-	{
+	public void onError(Activity activity, int requestCode, Exception e) {
 		if (callback == null) return;
 
 		KrollDict event = new KrollDict();
@@ -146,8 +136,8 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 	}
 
 	private static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-
 		Matrix matrix = new Matrix();
+		
 		switch (orientation) {
 			case ExifInterface.ORIENTATION_NORMAL:
 				return bitmap;
@@ -178,12 +168,12 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 			default:
 				return bitmap;
 		}
+		
 		try {
 			Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 			bitmap.recycle();
 			return bmRotated;
-		}
-		catch (OutOfMemoryError e) {
+		} catch (OutOfMemoryError e) {
 			e.printStackTrace();
 			return null;
 		}
