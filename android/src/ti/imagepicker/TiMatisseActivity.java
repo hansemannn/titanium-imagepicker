@@ -29,7 +29,9 @@ public class TiMatisseActivity extends Activity {
             .captureStrategy(new CaptureStrategy(true, "io.lambus.app.provider"))
             .countable(true)
             .maxSelectable(maxImageSelection)
+            .thumbnailScale(0.75f)
             .imageEngine(new GlideEngine())
+            .showSingleMediaType(true)
             .forResult(1337);
     }
     
