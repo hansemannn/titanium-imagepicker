@@ -11,7 +11,6 @@ package ti.imagepicker;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
-import org.appcelerator.kroll.common.TiConfig;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.titanium.TiApplication;
@@ -21,6 +20,7 @@ import org.appcelerator.titanium.TiBlob;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Matrix;
 import android.net.Uri;
@@ -30,7 +30,6 @@ import android.provider.MediaStore;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
@@ -38,11 +37,9 @@ import java.io.IOException;
 import com.zhihu.matisse.Matisse;
 
 @Kroll.module(name="TitaniumImagepicker", id="ti.imagepicker")
-public class TitaniumImagepickerModule extends KrollModule implements TiActivityResultHandler
-{
+public class TitaniumImagepickerModule extends KrollModule implements TiActivityResultHandler {
 	// Standard Debugging variables
 	private static final String LCAT = "TitaniumImagepickerModule";
-	private static final boolean DBG = TiConfig.LOGD;
 
 	private KrollFunction callback;
 	protected int requestCode;
@@ -69,34 +66,36 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 		if (callback == null) return;
 
 		if (thisRequestCode == requestCode && data != null) {
-			final List<String> paths = Matisse.obtainPathResult(data);
+			final List<Uri> uris = Matisse.obtainResult(data);
+			
+			if (uris != null) {
+				AsyncTask.execute(new Runnable() {
+					@Override
+					public void run() {
+						final int uriCount = uris.size();
+						
+						for (int i = 0; i < uriCount; i++) {
+							Uri url = uris.get(i);
 
-			AsyncTask.execute(new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 0; i < paths.size(); i++) {
-						String url = paths.get(i);
+							TiBlob image = computeBitmap(url);
+							if (image == null) continue;
 
-						final ArrayList<TiBlob> images = new ArrayList<>();
+							final KrollDict event = new KrollDict();
+							event.put("success", true);
+							event.put("image", image);
+							event.put("length", uriCount);
+							event.put("index", i);
 
-						TiBlob image = computeBitmap(url);
-						if (image == null) continue;
-						images.add(image);
-
-						final KrollDict event = new KrollDict();
-						event.put("success", true);
-						event.put("image", image);
-						event.put("length", paths.size());
-						event.put("index", i);
-
-						runOnMainThread(new Runnable() {
-							public void run() {
-								callback.callAsync(getKrollObject(), event);
-							}
-						});
+							runOnMainThread(new Runnable() {
+								public void run() {
+									callback.callAsync(getKrollObject(), event);
+								}
+							});
+						}
 					}
-				}
-			});
+				});
+			}
+			
 		} else {
 			KrollDict event = new KrollDict();
 			event.put("success", false);
@@ -106,19 +105,20 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 	}
 
 	@TargetApi(Build.VERSION_CODES.ECLAIR)
-	private TiBlob computeBitmap(String url) {
+	private TiBlob computeBitmap(Uri url) {
 		try {
-			File file = new File(url);
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(TiApplication.getInstance().getContentResolver(), Uri.fromFile(file));
+			ContentResolver contentResolver = TiApplication.getInstance().getContentResolver();
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(contentResolver, url);
             
-            int orientation = Utils.getOrientation(file);
+            int orientation = Utils.getOrientation(contentResolver, url);
+            
 			bitmap = rotateBitmap(bitmap, orientation);
 			
 			TiBlob blob = TiBlob.blobFromImage(bitmap);
 			bitmap = null;
 			return blob;
 		} catch (IOException ex) {
-			Log.d(LCAT, "Cannot receive bitmap at path = " + url);
+			Log.d(LCAT, "Cannot receive bitmap at path = " + url + " : exception = " + ex.getLocalizedMessage());
 		} catch (OutOfMemoryError ex) {
 			Log.d(LCAT, "Memory error while decoding image bitmap at path = " + url);
 		}
