@@ -29,6 +29,7 @@ import android.os.Build;
 import android.provider.MediaStore;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
+import android.database.Cursor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -110,16 +111,17 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 	@TargetApi(Build.VERSION_CODES.ECLAIR)
 	private TiBlob computeBitmap(String url) {
 		ExifInterface exif = null;
+		String realUrl = getRealPathFromURI(Uri.fromFile(new File(url)));
 
 		try {
-			exif = new ExifInterface(url);
+			exif = new ExifInterface(realUrl);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		try {
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(TiApplication.getInstance().getContentResolver(), Uri.fromFile(new File(url)));
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(TiApplication.getInstance().getContentResolver(), Uri.fromFile(new File(realUrl)));
 
 			bitmap = rotateBitmap(bitmap, orientation);
 			TiBlob blob = TiBlob.blobFromImage(bitmap);
@@ -133,6 +135,18 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 		}
 
 		return null;
+	}
+
+	public String getRealPathFromURI(Uri contentUri) {
+		String res = null;
+		String[] proj = { MediaStore.Images.Media.DATA };
+		Cursor cursor = TiApplication.getInstance().getContentResolver().query(contentUri, proj, null, null, null);
+		if(cursor != null && cursor.moveToFirst()){;
+		   int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		   res = cursor.getString(column_index);
+		}
+		cursor.close();
+		return res;
 	}
 
 	@Override

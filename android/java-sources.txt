@@ -1,5 +1,6 @@
 "/Users/hans/Documents/dev/titanium/titanium-imagepicker/android/src/ti/imagepicker/TiMatisseActivity.java"
 "/Users/hans/Documents/dev/titanium/titanium-imagepicker/android/src/ti/imagepicker/TitaniumImagepickerModule.java"
+"/Users/hans/Documents/dev/titanium/titanium-imagepicker/android/build/generated/java/ti/imagepicker/CommonJsSourceProvider.java"
 "/Users/hans/Documents/dev/titanium/titanium-imagepicker/android/build/generated/java/ti/imagepicker/TitaniumImagepickerBootstrap.java"
 "/Users/hans/Documents/dev/titanium/titanium-imagepicker/android/build/generated/r/android/support/compat/R.java"
 "/Users/hans/Documents/dev/titanium/titanium-imagepicker/android/build/generated/r/android/support/coreui/R.java"
