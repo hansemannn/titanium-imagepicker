@@ -40,7 +40,8 @@ This started as a parity effort via [@prashantsaini1/titanium-imagepicker](https
 | shouldSaveNewPicturesToAlbum | save new pictures to album                                                                 | `false`                                | iOS          |
 | defaultMultipleSelection     | default multiple selection                                                                 | `false`                                | iOS          |
 | enablePhoto                  | enable or disable photo                                                                    | `false`                                | iOS          |
-| minNumberOfItems             | min number of items photo                                                                  | 1                                      | iOS          |
+| minNumberOfItems             | min number of photos                                                                  | 1                                      | iOS          |
+| mode             | image selection mode (IMAGE_PICKER_MODE_ALL, IMAGE_PICKER_MODE_PHOTO, IMAGE_PICKER_MODE_LIBRARY)                                                                 | IMAGE_PICKER_MODE_ALL                                      | iOS          |
 
 ```javascript
 import ImagePicker from 'ti.imagepicker';
