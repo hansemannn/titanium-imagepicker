@@ -73,6 +73,10 @@ class TiImagepickerModule: TiModule {
       config.library.maxNumberOfItems = options["maxImageSelection"] as? Int ?? 99
     }
 
+    if options["minNumberOfItems"] != nil {
+      config.library.minNumberOfItems = options["minNumberOfItems"] as? Int ?? 1
+    }
+
     if options["doneButtonTitle"] != nil {
       config.wordings.done = options["doneButtonTitle"] as! String
     }
