@@ -25,7 +25,6 @@ android/clean
 android/ant_clean
 android/.classpath
 android/.settings
-android/dist/
 android/launch-*
 nbproject
 /metadata.json

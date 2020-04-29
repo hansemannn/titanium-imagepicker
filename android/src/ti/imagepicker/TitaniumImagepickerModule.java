@@ -11,7 +11,6 @@ package ti.imagepicker;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
-import org.appcelerator.kroll.common.TiConfig;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.titanium.TiApplication;
@@ -21,6 +20,7 @@ import org.appcelerator.titanium.TiBlob;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Matrix;
 import android.net.Uri;
@@ -31,7 +31,6 @@ import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.database.Cursor;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
@@ -39,73 +38,77 @@ import java.io.IOException;
 import com.zhihu.matisse.Matisse;
 
 @Kroll.module(name="TitaniumImagepicker", id="ti.imagepicker")
-public class TitaniumImagepickerModule extends KrollModule implements TiActivityResultHandler
-{
+public class TitaniumImagepickerModule extends KrollModule implements TiActivityResultHandler {
 	// Standard Debugging variables
 	private static final String LCAT = "TitaniumImagepickerModule";
-	private static final boolean DBG = TiConfig.LOGD;
 
 	private KrollFunction callback;
 	protected int requestCode;
+	private boolean resultAsBlob;
 
 	@Kroll.method(runOnUiThread = true)
-	public void openGallery(KrollDict args)
-	{
+	public void openGallery(KrollDict args) {
 		callback = (KrollFunction) args.get("callback");
+		
+		int maxImageSelection = args.optInt(Defaults.PROPERTY_MAX_IMAGE_SELECTION, Defaults.VALUE_MAX_IMAGE_SELECTION);
+		
+		// returns the result as TiBlob
+		resultAsBlob = args.optBoolean(Defaults.PROPERTY_RESULT_AS_BLOB, Defaults.VALUE_RESULT_AS_BLOB);
 
 		Activity activity = TiApplication.getInstance().getCurrentActivity();
 		TiActivitySupport support = (TiActivitySupport) activity;
-		requestCode = support.getUniqueResultCode();
-
-		int maxImageSelection = args.optInt("maxImageSelection", 3);
+		requestCode = support.getUniqueResultCode();		
 		
 		Intent matisseIntent = new Intent(activity, TiMatisseActivity.class);
-		matisseIntent.putExtra(TiMatisseActivity.PROPERTY_MAX_IMAGE_SELECTION, maxImageSelection);
+		matisseIntent.putExtra(Defaults.PROPERTY_MAX_IMAGE_SELECTION, maxImageSelection);
 		
 		support.launchActivityForResult(matisseIntent, requestCode, this);
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	@Override
-	public void onResult(Activity activity, int thisRequestCode, int resultCode, Intent data)
-	{
+	public void onResult(Activity activity, int thisRequestCode, int resultCode, Intent data) {
 		if (callback == null) return;
+		
+		final KrollDict event = new KrollDict();
 
 		if (thisRequestCode == requestCode && data != null) {
-			final List<String> paths = Matisse.obtainPathResult(data);
-
-			AsyncTask.execute(new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 0; i < paths.size(); i++) {
-						String url = paths.get(i);
-
-						final ArrayList<TiBlob> images = new ArrayList<>();
-
-						TiBlob image = computeBitmap(url);
+			event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, true);
+			event.put(Defaults.CALLBACK_PROPERTY_CANCEL, false);
+			
+			if (resultAsBlob) {
+				final List<Uri> uris = Matisse.obtainResult(data);
+				final ArrayList<TiBlob> blobList = new ArrayList<>();
+				
+				if (uris != null) {
+					final int uriCount = uris.size();
+					
+					for (int i = 0; i < uriCount; i++) {
+						TiBlob image = computeBitmap( uris.get(i) );
 						if (image == null) continue;
-						images.add(image);
-
-						final KrollDict event = new KrollDict();
-						event.put("success", true);
-						event.put("image", image);
-						event.put("length", paths.size());
-						event.put("index", i);
-
-						runOnMainThread(new Runnable() {
-							public void run() {
-								callback.callAsync(getKrollObject(), event);
-							}
-						});
+						blobList.add(image);
 					}
 				}
-			});
+				
+				event.put(Defaults.CALLBACK_PROPERTY_IMAGES, blobList.toArray());
+				
+			} else {
+				final List<String> paths = Matisse.obtainPathResult(data);
+				
+				if (paths != null) {
+					event.put(Defaults.CALLBACK_PROPERTY_IMAGES, paths.toArray());
+				} else {
+					event.put(Defaults.CALLBACK_PROPERTY_IMAGES, new Object[0]);
+				}
+			}
+			
 		} else {
-			KrollDict event = new KrollDict();
-			event.put("success", false);
-			event.put("cancel", true);
-			callback.callAsync(getKrollObject(), event);	
+			event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, false);
+			event.put(Defaults.CALLBACK_PROPERTY_CANCEL, true);
+			event.put(Defaults.CALLBACK_PROPERTY_IMAGES, new Object[0]);
 		}
+		
+		callback.callAsync(getKrollObject(), event);
 	}
 
 	@TargetApi(Build.VERSION_CODES.ECLAIR)
@@ -125,13 +128,19 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 
 			bitmap = rotateBitmap(bitmap, orientation);
 			TiBlob blob = TiBlob.blobFromImage(bitmap);
-			bitmap = null;
-
+				
+			if (bitmap != null) {
+				bitmap.recycle();
+				bitmap = null;
+			}
+			
 			return blob;
+			
 		} catch (IOException ex) {
-			Log.e(LCAT, "Cannot receive bitmap at path = " + url);
+			Log.d(LCAT, "Cannot receive bitmap at path = " + url + " : exception = " + ex.getLocalizedMessage());
+			
 		} catch (OutOfMemoryError ex) {
-			Log.e(LCAT, "Memory error while decoding image bitmap at path = " + url);
+			Log.d(LCAT, "Memory error while decoding image bitmap at path = " + url);
 		}
 
 		return null;
@@ -150,18 +159,17 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 	}
 
 	@Override
-	public void onError(Activity activity, int requestCode, Exception e)
-	{
+	public void onError(Activity activity, int requestCode, Exception e) {
 		if (callback == null) return;
 
 		KrollDict event = new KrollDict();
-		event.put("success", false);
+		event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, false);
 		callback.callAsync(getKrollObject(), event);
 	}
 
 	private static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-
 		Matrix matrix = new Matrix();
+		
 		switch (orientation) {
 			case ExifInterface.ORIENTATION_NORMAL:
 				return bitmap;
@@ -192,12 +200,17 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 			default:
 				return bitmap;
 		}
+		
 		try {
 			Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			bitmap.recycle();
+			
+			if (bitmap != null) {
+				bitmap.recycle();
+				bitmap = null;
+			}
+			
 			return bmRotated;
-		}
-		catch (OutOfMemoryError e) {
+		} catch (OutOfMemoryError e) {
 			e.printStackTrace();
 			return null;
 		}

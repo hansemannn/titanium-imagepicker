@@ -1,22 +1,16 @@
 package ti.imagepicker;
 
-import org.appcelerator.kroll.common.Log;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
-import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
 
-public class TiMatisseActivity extends Activity {
-	
-	public static final String PROPERTY_MAX_IMAGE_SELECTION = "maxImageSelection";
-		
+public class TiMatisseActivity extends Activity {		
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +18,7 @@ public class TiMatisseActivity extends Activity {
         Intent i = getIntent();
         Bundle extras = i.getExtras();
         
-        int maxImageSelection = extras.getInt(PROPERTY_MAX_IMAGE_SELECTION);
+        int maxImageSelection = extras.getInt(Defaults.PROPERTY_MAX_IMAGE_SELECTION);
         
         Matisse.from(this)
             .choose(MimeType.ofImage())
@@ -32,7 +26,9 @@ public class TiMatisseActivity extends Activity {
             .captureStrategy(new CaptureStrategy(true, "io.lambus.app.provider"))
             .countable(true)
             .maxSelectable(maxImageSelection)
+            .thumbnailScale(0.80f)
             .imageEngine(new GlideEngine())
+            .showSingleMediaType(true)
             .forResult(1337);
     }
     
