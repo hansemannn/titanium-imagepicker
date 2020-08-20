@@ -6,18 +6,19 @@
 //  Copyright © 2016 Sacha Durand Saint Omer. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 prefix operator |
 @discardableResult
 public prefix func | (p: UIView) -> UIView {
-    return p.left(0)
+    return p.leading(0)
 }
 
 postfix operator |
 @discardableResult
 public postfix func | (p: UIView) -> UIView {
-    return p.right(0)
+    return p.trailing(0)
 }
 
 infix operator ~ : HeightPrecedence
@@ -58,7 +59,7 @@ public prefix func |- (p: CGFloat) -> SideConstraint {
 
 @discardableResult
 public prefix func |- (v: UIView) -> UIView {
-    v.left(8)
+    v.leading(8)
     return v
 }
 
@@ -72,7 +73,7 @@ public postfix func -| (p: CGFloat) -> SideConstraint {
 
 @discardableResult
 public postfix func -| (v: UIView) -> UIView {
-    v.right(8)
+    v.trailing(8)
     return v
 }
 
@@ -99,8 +100,8 @@ public func - (left: UIView, right: CGFloat) -> PartialConstraint {
 @discardableResult
 public func - (left: SideConstraint, right: UIView) -> UIView {
     if let spv = right.superview {
-        let c = constraint(item: right, attribute: .left,
-                           toItem: spv, attribute: .left,
+        let c = constraint(item: right, attribute: .leading,
+                           toItem: spv, attribute: .leading,
                            constant: left.constant)
         spv.addConstraint(c)
     }
@@ -111,8 +112,8 @@ public func - (left: SideConstraint, right: UIView) -> UIView {
 public func - (left: [UIView], right: SideConstraint) -> [UIView] {
     let lastView = left[left.count-1]
     if let spv = lastView.superview {
-        let c = constraint(item: lastView, attribute: .right,
-                           toItem: spv, attribute: .right,
+        let c = constraint(item: lastView, attribute: .trailing,
+                           toItem: spv, attribute: .trailing,
                            constant: -right.constant)
         spv.addConstraint(c)
     }
@@ -122,8 +123,8 @@ public func - (left: [UIView], right: SideConstraint) -> [UIView] {
 @discardableResult
 public func - (left: UIView, right: SideConstraint) -> UIView {
     if let spv = left.superview {
-        let c = constraint(item: left, attribute: .right,
-                           toItem: spv, attribute: .right,
+        let c = constraint(item: left, attribute: .trailing,
+                           toItem: spv, attribute: .trailing,
                            constant: -right.constant)
         spv.addConstraint(c)
     }
@@ -135,8 +136,8 @@ public func - (left: PartialConstraint, right: UIView) -> [UIView] {
     if let views = left.views {
         if let spv = right.superview {
             let lastView = views[views.count-1]
-            let c = constraint(item: lastView, attribute: .right,
-                               toItem: right, attribute: .left,
+            let c = constraint(item: lastView, attribute: .trailing,
+                               toItem: right, attribute: .leading,
                                constant: -left.constant)
             spv.addConstraint(c)
         }
@@ -145,8 +146,8 @@ public func - (left: PartialConstraint, right: UIView) -> [UIView] {
     } else {
         // were at the end?? nooope?/?
         if let spv = right.superview {
-            let c = constraint(item: left.view1, attribute: .right,
-                               toItem: right, attribute: .left,
+            let c = constraint(item: left.view1, attribute: .trailing,
+                               toItem: right, attribute: .leading,
                                constant: -left.constant)
             spv.addConstraint(c)
         }
@@ -157,8 +158,8 @@ public func - (left: PartialConstraint, right: UIView) -> [UIView] {
 @discardableResult
 public func - (left: UIView, right: UIView) -> [UIView] {
     if let spv = left.superview {
-        let c = constraint(item: right, attribute: .left,
-                           toItem: left, attribute: .right,
+        let c = constraint(item: right, attribute: .leading,
+                           toItem: left, attribute: .trailing,
                            constant: 8)
         spv.addConstraint(c)
     }
@@ -177,8 +178,8 @@ public func - (left: [UIView], right: CGFloat) -> PartialConstraint {
 public func - (left: [UIView], right: UIView) -> [UIView] {
     let lastView = left[left.count-1]
     if let spv = lastView.superview {
-        let c = constraint(item: lastView, attribute: .right,
-                           toItem: right, attribute: .left,
+        let c = constraint(item: lastView, attribute: .trailing,
+                           toItem: right, attribute: .leading,
                            constant: -8)
         spv.addConstraint(c)
     }
@@ -206,3 +207,4 @@ public func - (left: Space, right: UIView) -> [UIView] {
     va?.append(right)
     return va!
 }
+#endif

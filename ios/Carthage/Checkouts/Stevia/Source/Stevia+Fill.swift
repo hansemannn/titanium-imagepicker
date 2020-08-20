@@ -6,6 +6,7 @@
 //  Copyright © 2016 Sacha Durand Saint Omer. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public extension UIView {
@@ -15,7 +16,7 @@ public extension UIView {
      A padding can be used to apply equal spaces between the view and its superview
     */
     @discardableResult
-    func fillContainer(_ padding: CGFloat = 0) -> UIView {
+    func fillContainer(_ padding: CGFloat = 0) -> Self {
         fillHorizontally(m: padding)
         fillVertically(m: padding)
         return self
@@ -26,7 +27,7 @@ public extension UIView {
      Adds the constraints needed for the view to fill its `superview` Vertically.
      A padding can be used to apply equal spaces between the view and its superview
      */
-    func fillV(m points: CGFloat = 0) -> UIView {
+    func fillV(m points: CGFloat = 0) -> Self {
         return fill(.vertical, points: points)
     }
     
@@ -35,7 +36,7 @@ public extension UIView {
      A padding can be used to apply equal spaces between the view and its superview
      */
     @discardableResult
-    func fillVertically(m points: CGFloat = 0) -> UIView {
+    func fillVertically(m points: CGFloat = 0) -> Self {
         return fill(.vertical, points: points)
     }
     
@@ -44,7 +45,7 @@ public extension UIView {
      Adds the constraints needed for the view to fill its `superview` Horizontally.
      A padding can be used to apply equal spaces between the view and its superview
      */
-    func fillH(m points: CGFloat = 0) -> UIView {
+    func fillH(m points: CGFloat = 0) -> Self {
         return fill(.horizontal, points: points)
     }
     
@@ -53,13 +54,13 @@ public extension UIView {
      A padding can be used to apply equal spaces between the view and its superview
      */
     @discardableResult
-    func fillHorizontally(m points: CGFloat = 0) -> UIView {
+    func fillHorizontally(m points: CGFloat = 0) -> Self {
         return fill(.horizontal, points: points)
     }
     
-    fileprivate func fill(_ axis: NSLayoutConstraint.Axis, points: CGFloat = 0) -> UIView {
-        let a: NSLayoutConstraint.Attribute = axis == .vertical ? .top : .left
-        let b: NSLayoutConstraint.Attribute = axis == .vertical ? .bottom : .right
+    fileprivate func fill(_ axis: NSLayoutConstraint.Axis, points: CGFloat = 0) -> Self {
+        let a: NSLayoutConstraint.Attribute = axis == .vertical ? .top : .leading
+        let b: NSLayoutConstraint.Attribute = axis == .vertical ? .bottom : .trailing
         if let spv = superview {
             let c1 = constraint(item: self, attribute: a, toItem: spv, constant: points)
             let c2 = constraint(item: self, attribute: b, toItem: spv, constant: -points)
@@ -68,3 +69,4 @@ public extension UIView {
         return self
     }
 }
+#endif

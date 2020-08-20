@@ -6,6 +6,7 @@
 //  Copyright © 2015 Sacha Durand Saint Omer. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 // MARK: - Shortcut
@@ -68,7 +69,7 @@ public extension UIView {
  
     - Returns: The NSLayoutConstraint created.
  */
-public func constraint(item view1: AnyObject,
+func constraint(item view1: AnyObject,
                        attribute attr1: NSLayoutConstraint.Attribute,
                        relatedBy: NSLayoutConstraint.Relation = .equal,
                        toItem view2: AnyObject? = nil,
@@ -119,9 +120,9 @@ public extension UIView {
         if let spv = superview {
             let cs = [
                 constraint(item: self, attribute: .top, toItem: otherView),
-                constraint(item: self, attribute: .right, toItem: otherView),
+                constraint(item: self, attribute: .trailing, toItem: otherView),
                 constraint(item: self, attribute: .bottom, toItem: otherView),
-                constraint(item: self, attribute: .left, toItem: otherView)
+                constraint(item: self, attribute: .leading, toItem: otherView)
             ]
             spv.addConstraints(cs)
         }
@@ -139,7 +140,7 @@ public extension UIView {
      
      */
     @discardableResult
-    func heightEqualsWidth() -> UIView {
+    func heightEqualsWidth() -> Self {
         if let spv = superview {
             let c = constraint(item: self, attribute: .height, toItem: self, attribute: .width)
             spv.addConstraint(c)
@@ -148,3 +149,4 @@ public extension UIView {
     }
     
 }
+#endif

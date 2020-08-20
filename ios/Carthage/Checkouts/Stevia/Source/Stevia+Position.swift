@@ -6,6 +6,7 @@
 //  Copyright © 2016 Sacha Durand Saint Omer. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public extension UIView {
@@ -22,7 +23,7 @@ public extension UIView {
      - Returns: Itself for chaining purposes
      */
     @discardableResult
-    func left(_ points: CGFloat) -> UIView {
+    func left(_ points: CGFloat) -> Self {
         return position(.left, points: points)
     }
     
@@ -38,7 +39,7 @@ public extension UIView {
      - Returns: Itself for chaining purposes
      */
     @discardableResult
-    func right(_ points: CGFloat) -> UIView {
+    func right(_ points: CGFloat) -> Self {
         return position(.right, points: -points)
     }
     
@@ -54,7 +55,7 @@ public extension UIView {
     - Returns: Itself for chaining purposes
     */
     @discardableResult
-    func top(_ points: CGFloat) -> UIView {
+    func top(_ points: CGFloat) -> Self {
         return position(.top, points: points)
     }
     
@@ -70,7 +71,7 @@ public extension UIView {
     - Returns: Itself for chaining purposes
     */
     @discardableResult
-    func bottom(_ points: CGFloat) -> UIView {
+    func bottom(_ points: CGFloat) -> Self {
         return position(.bottom, points: -points)
     }
 
@@ -86,7 +87,7 @@ public extension UIView {
     - Returns: Itself for chaining purposes
     */
     @discardableResult
-    func left(_ fm: SteviaFlexibleMargin) -> UIView {
+    func left(_ fm: SteviaFlexibleMargin) -> Self {
         return position(.left, relatedBy: fm.relation, points: fm.points)
     }
     
@@ -102,7 +103,7 @@ public extension UIView {
     - Returns: Itself for chaining purposes
     */
     @discardableResult
-    func right(_ fm: SteviaFlexibleMargin) -> UIView {
+    func right(_ fm: SteviaFlexibleMargin) -> Self {
         // For right this should be inverted.
         var n = SteviaFlexibleMargin()
         n.points = -fm.points
@@ -127,7 +128,7 @@ public extension UIView {
     - Returns: Itself for chaining purposes
      */
     @discardableResult
-    func top(_ fm: SteviaFlexibleMargin) -> UIView {
+    func top(_ fm: SteviaFlexibleMargin) -> Self {
         return position(.top, relatedBy: fm.relation, points: fm.points)
     }
     
@@ -143,7 +144,7 @@ public extension UIView {
     - Returns: Itself for chaining purposes
     */
     @discardableResult
-    func bottom(_ fm: SteviaFlexibleMargin) -> UIView {
+    func bottom(_ fm: SteviaFlexibleMargin) -> Self {
         // For bottom this should be inverted.
         var n = SteviaFlexibleMargin()
         n.points = -fm.points
@@ -156,9 +157,58 @@ public extension UIView {
         return position(.bottom, relatedBy: n.relation, points: n.points)
     }
     
+    /** Sets the leading margin for a view.
+     
+    Example Usage :
+     
+     label.leading(20)
+     label.leading(<=20)
+     label.leading(>=20)
+     label.leading(20%)
+     
+    - Returns: itself for chaining purposes
+    */
+    
+    @discardableResult
+    func leading(_ points: CGFloat) -> UIView {
+        return position(.leading, points: points)
+    }
+    
+    @discardableResult
+    func leading(_ fm: SteviaFlexibleMargin) -> UIView {
+        return position(.leading, relatedBy: fm.relation, points: fm.points)
+    }
+    
+    /** Sets the trailing margin for a view.
+     
+    Example Usage :
+     
+     label.trailing(20)
+     label.trailing(<=20)
+     label.trailing(>=20)
+     label.trailing(20%)
+     
+    - Returns: itself for chaining purposes
+    */
+    @discardableResult
+    func trailing(_ points: CGFloat) -> UIView {
+        return position(.trailing, points: -points)
+    }
+
+    @discardableResult
+    func trailing(_ fm: SteviaFlexibleMargin) -> UIView {
+        var invertedRelation = fm.relation
+        if invertedRelation == .lessThanOrEqual {
+            invertedRelation = .greaterThanOrEqual
+        } else if invertedRelation == .greaterThanOrEqual {
+            invertedRelation = .lessThanOrEqual
+        }
+        return position(.trailing, relatedBy: invertedRelation!, points: -fm.points)
+    }
+    
     fileprivate func position(_ position: NSLayoutConstraint.Attribute,
                               relatedBy: NSLayoutConstraint.Relation = .equal,
-                              points: CGFloat) -> UIView {
+                              points: CGFloat) -> Self {
         if let spv = superview {
             let c = constraint(item: self, attribute: position,
                                relatedBy: relatedBy,
@@ -169,3 +219,4 @@ public extension UIView {
         return self
     }
 }
+#endif

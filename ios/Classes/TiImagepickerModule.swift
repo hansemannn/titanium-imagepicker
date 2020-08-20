@@ -53,7 +53,6 @@ class TiImagepickerModule: TiModule {
     let showsPhotoFilters = options["showsPhotoFilters"] as? Bool ?? false
     let shouldSaveNewPicturesToAlbum = options["shouldSaveNewPicturesToAlbum"] as? Bool ?? false
     let defaultMultipleSelection = options["defaultMultipleSelection"] as? Bool ?? true
-    let enablePhoto = options["enablePhoto"] as? Bool ?? false
 
     var config = YPImagePickerConfiguration()
 
@@ -163,6 +162,7 @@ class TiImagepickerModule: TiModule {
       return
     }
 
+    picker.modalPresentationStyle = .fullScreen
     topPresentedController.present(picker, animated: true, completion: nil)
   }
 

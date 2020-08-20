@@ -28,6 +28,7 @@ class YPVideoCaptureHelper: NSObject {
     private var isPreviewSetup = false
     private var previewView: UIView!
     private var motionManager = CMMotionManager()
+    private var initVideoZoomFactor: CGFloat = 1.0
     
     // MARK: - Init
     
@@ -112,6 +113,40 @@ class YPVideoCaptureHelper: NSObject {
         }
     }
     
+    // MARK: - Zoom
+    
+    public func zoom(began: Bool, scale: CGFloat) {
+       guard let device = videoInput?.device else {
+           return
+       }
+       
+       if began {
+           initVideoZoomFactor = device.videoZoomFactor
+           return
+       }
+       
+       do {
+           try device.lockForConfiguration()
+           defer { device.unlockForConfiguration() }
+           
+           var minAvailableVideoZoomFactor: CGFloat = 1.0
+           if #available(iOS 11.0, *) {
+               minAvailableVideoZoomFactor = device.minAvailableVideoZoomFactor
+           }
+           var maxAvailableVideoZoomFactor: CGFloat = device.activeFormat.videoMaxZoomFactor
+           if #available(iOS 11.0, *) {
+               maxAvailableVideoZoomFactor = device.maxAvailableVideoZoomFactor
+           }
+           maxAvailableVideoZoomFactor = min(maxAvailableVideoZoomFactor, YPConfig.maxCameraZoomFactor)
+           
+           let desiredZoomFactor = initVideoZoomFactor * scale
+           device.videoZoomFactor = max(minAvailableVideoZoomFactor,
+										min(desiredZoomFactor, maxAvailableVideoZoomFactor))
+       } catch let error {
+          print("💩 \(error)")
+       }
+    }
+    
     // MARK: - Stop Camera
     
     public func stopCamera() {
@@ -193,6 +228,9 @@ class YPVideoCaptureHelper: NSObject {
                 CMTimeMakeWithSeconds(self.videoRecordingTimeLimit, preferredTimescale: timeScale)
             videoOutput.maxRecordedDuration = maxDuration
             videoOutput.minFreeDiskSpaceLimit = 1024 * 1024
+            if YPConfig.video.fileType == .mp4 {
+                videoOutput.movieFragmentInterval = .invalid // Allows audio for MP4s over 10 seconds.
+            }
             if session.canAddOutput(videoOutput) {
                 session.addOutput(videoOutput)
             }
@@ -216,7 +254,7 @@ class YPVideoCaptureHelper: NSObject {
     // MARK: - Orientation
 
     /// This enables to get the correct orientation even when the device is locked for orientation \o/
-    private func checkOrientation(completion: @escaping(_ orientation: AVCaptureVideoOrientation?)->()) {
+    private func checkOrientation(completion: @escaping(_ orientation: AVCaptureVideoOrientation?) -> Void) {
         motionManager.accelerometerUpdateInterval = 5
         motionManager.startAccelerometerUpdates( to: OperationQueue() ) { [weak self] data, _ in
             self?.motionManager.stopAccelerometerUpdates()

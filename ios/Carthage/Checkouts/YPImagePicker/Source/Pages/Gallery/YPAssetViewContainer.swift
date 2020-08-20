@@ -14,7 +14,7 @@ import AVFoundation
 /// The container for asset (video or image). It containts the YPGridView and YPAssetZoomableView.
 class YPAssetViewContainer: UIView {
     public var zoomableView: YPAssetZoomableView?
-    public let grid = YPGridView()
+    public var itemOverlay: UIView?
     public let curtain = UIView()
     public let spinnerView = UIView()
     public let squareCropButton = UIButton()
@@ -23,15 +23,28 @@ class YPAssetViewContainer: UIView {
     public var isShown = true
     
     private let spinner = UIActivityIndicatorView(style: .white)
-    private var shouldCropToSquare = true
+    private var shouldCropToSquare = YPConfig.library.isSquareByDefault
     private var isMultipleSelection = false
 
+    public var itemOverlayType = YPConfig.library.itemOverlayType
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        addSubview(grid)
-        grid.frame = frame
-        clipsToBounds = true
+        switch itemOverlayType {
+        case .grid:
+            itemOverlay = YPGridView()
+        default:
+            break
+        }
+        
+        if let itemOverlay = itemOverlay {
+            addSubview(itemOverlay)
+            itemOverlay.frame = frame
+            clipsToBounds = true
+            
+            itemOverlay.alpha = 0
+        }
         
         for sv in subviews {
             if let cv = sv as? YPAssetZoomableView {
@@ -39,8 +52,6 @@ class YPAssetViewContainer: UIView {
                 zoomableView?.myDelegate = self
             }
         }
-        
-        grid.alpha = 0
         
         let touchDownGR = UILongPressGestureRecognizer(target: self,
                                                        action: #selector(handleTouchDown))
@@ -62,8 +73,8 @@ class YPAssetViewContainer: UIView {
         curtain.fillContainer()
         
         spinner.startAnimating()
-        spinnerView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        curtain.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        spinnerView.backgroundColor = UIColor.ypLabel.withAlphaComponent(0.3)
+        curtain.backgroundColor = UIColor.ypLabel.withAlphaComponent(0.7)
         curtain.alpha = 0
         
         if !onlySquare {
@@ -94,7 +105,6 @@ class YPAssetViewContainer: UIView {
         zoomableView?.fitImage(shouldCropToSquare, animated: true)
     }
     
-    
     public func refreshSquareCropButton() {
         if onlySquare {
             squareCropButton.isHidden = true
@@ -105,7 +115,9 @@ class YPAssetViewContainer: UIView {
             }
         }
         
-        zoomableView?.fitImage(onlySquare)
+        let shouldFit = YPConfig.library.onlySquare ? true : shouldCropToSquare
+        zoomableView?.fitImage(shouldFit)
+        zoomableView?.layoutSubviews()
     }
     
     // MARK: - Multiple selection
@@ -124,9 +136,11 @@ extension YPAssetViewContainer: YPAssetZoomableViewDelegate {
     public func ypAssetZoomableViewDidLayoutSubviews(_ zoomableView: YPAssetZoomableView) {
         let newFrame = zoomableView.assetImageView.convert(zoomableView.assetImageView.bounds, to: self)
         
-        // update grid position
-        grid.frame = frame.intersection(newFrame)
-        grid.layoutIfNeeded()
+        if let itemOverlay = itemOverlay {
+            // update grid position
+            itemOverlay.frame = frame.intersection(newFrame)
+            itemOverlay.layoutIfNeeded()
+        }
         
         // Update play imageView position - bringing the playImageView from the videoView to assetViewContainer,
         // but the controll for appearing it still in videoView.
@@ -137,16 +151,22 @@ extension YPAssetViewContainer: YPAssetZoomableViewDelegate {
     }
     
     public func ypAssetZoomableViewScrollViewDidZoom() {
+        guard let itemOverlay = itemOverlay else {
+            return
+        }
         if isShown {
             UIView.animate(withDuration: 0.1) {
-                self.grid.alpha = 1
+                itemOverlay.alpha = 1
             }
         }
     }
     
     public func ypAssetZoomableViewScrollViewDidEndZooming() {
+        guard let itemOverlay = itemOverlay else {
+            return
+        }
         UIView.animate(withDuration: 0.3) {
-            self.grid.alpha = 0
+            itemOverlay.alpha = 0
         }
     }
 }
@@ -164,16 +184,19 @@ extension YPAssetViewContainer: UIGestureRecognizerDelegate {
     
     @objc
     private func handleTouchDown(sender: UILongPressGestureRecognizer) {
+        guard let itemOverlay = itemOverlay else {
+            return
+        }
         switch sender.state {
         case .began:
             if isShown {
                 UIView.animate(withDuration: 0.1) {
-                    self.grid.alpha = 1
+                    itemOverlay.alpha = 1
                 }
             }
         case .ended:
             UIView.animate(withDuration: 0.3) {
-                self.grid.alpha = 0
+                itemOverlay.alpha = 0
             }
         default: ()
         }

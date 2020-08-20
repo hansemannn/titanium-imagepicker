@@ -6,6 +6,7 @@
 //  Copyright © 2016 Sacha Durand Saint Omer. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public extension UIView {
@@ -26,7 +27,7 @@ public extension UIView {
      
      */
     @discardableResult
-    func size(_ points: CGFloat) -> UIView {
+    func size(_ points: CGFloat) -> Self {
         width(points)
         height(points)
         return self
@@ -52,7 +53,7 @@ public extension UIView {
      
      */
     @discardableResult
-    func height(_ points: CGFloat) -> UIView {
+    func height(_ points: CGFloat) -> Self {
         return size(.height, points: points)
     }
     
@@ -70,7 +71,7 @@ public extension UIView {
      
      */
     @discardableResult
-    func width(_ points: CGFloat) -> UIView {
+    func width(_ points: CGFloat) -> Self {
         return size(.width, points: points)
     }
     
@@ -94,7 +95,7 @@ public extension UIView {
      
      */
     @discardableResult
-    func height(_ fm: SteviaFlexibleMargin) -> UIView {
+    func height(_ fm: SteviaFlexibleMargin) -> Self {
         return size(.height, relatedBy: fm.relation, points: fm.points)
     }
     
@@ -112,13 +113,13 @@ public extension UIView {
      
      */
     @discardableResult
-    func width(_ fm: SteviaFlexibleMargin) -> UIView {
+    func width(_ fm: SteviaFlexibleMargin) -> Self {
         return size(.width, relatedBy: fm.relation, points: fm.points)
     }
     
     fileprivate func size(_ attribute: NSLayoutConstraint.Attribute,
                           relatedBy: NSLayoutConstraint.Relation = .equal,
-                          points: CGFloat) -> UIView {
+                          points: CGFloat) -> Self {
         let c = constraint(item: self,
                            attribute: attribute,
                            relatedBy: relatedBy,
@@ -277,3 +278,4 @@ private func equal(_ attribute: NSLayoutConstraint.Attribute, views: [UIView]) {
         previousView = v
     }
 }
+#endif

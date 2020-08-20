@@ -6,6 +6,7 @@
 //  Copyright © 2017 Sacha Durand Saint Omer. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
 
 public struct SteviaPercentage {
@@ -35,7 +36,7 @@ public extension UIView {
      
      */
     @discardableResult
-    func size(_ p: SteviaPercentage) -> UIView {
+    func size(_ p: SteviaPercentage) -> Self {
         width(p)
         height(p)
         return self
@@ -55,7 +56,7 @@ public extension UIView {
      
      */
     @discardableResult
-    func width(_ p: SteviaPercentage) -> UIView {
+    func width(_ p: SteviaPercentage) -> Self {
         if let spv = superview {
             Width == p.value % spv.Width
         }
@@ -82,7 +83,7 @@ public extension UIView {
      
      */
     @discardableResult
-    func height(_ p: SteviaPercentage) -> UIView {
+    func height(_ p: SteviaPercentage) -> Self {
         if let spv = superview {
             Height == p.value % spv.Height
         }
@@ -101,7 +102,7 @@ public extension UIView {
     - Returns: Itself for chaining purposes
      */
     @discardableResult
-    func top(_ p: SteviaPercentage) -> UIView {
+    func top(_ p: SteviaPercentage) -> Self {
         if let spv = superview {
             Top == p.value % spv.Bottom
         }
@@ -120,7 +121,7 @@ public extension UIView {
      - Returns: Itself for chaining purposes
      */
     @discardableResult
-    func left(_ p: SteviaPercentage) -> UIView {
+    func left(_ p: SteviaPercentage) -> Self {
         if let spv = superview {
             Left == p.value % spv.Right
         }
@@ -139,7 +140,7 @@ public extension UIView {
      - Returns: Itself for chaining purposes
      */
     @discardableResult
-    func right(_ p: SteviaPercentage) -> UIView {
+    func right(_ p: SteviaPercentage) -> Self {
         if let spv = superview {
             if p.value == 100 {
                 Right == spv.Left
@@ -162,7 +163,7 @@ public extension UIView {
      - Returns: Itself for chaining purposes
      */
     @discardableResult
-    func bottom(_ p: SteviaPercentage) -> UIView {
+    func bottom(_ p: SteviaPercentage) -> Self {
         if let spv = superview {
             if p.value == 100 {
                 Bottom == spv.Top
@@ -172,4 +173,66 @@ public extension UIView {
         }
         return self
     }
+    
+    /** Sets the leading margin for a view.
+     
+    Example Usage :
+     
+     label.leading(20)
+     label.leading(<=20)
+     label.leading(>=20)
+     label.leading(20%)
+     
+    - Returns: itself for chaining purposes
+    */
+    @discardableResult
+    func leading(_ p: SteviaPercentage) -> UIView {
+        // Percent based (multipliers) with leading or trailing attributes
+        // are not available so we introduce an intermediary layout guide.
+        // |-[layoutGuide(== x % width)-[view]
+        // RTL version: [view]-[layoutGuide(== x % width)-|
+        if let spv = superview {
+            let lg = UILayoutGuide()
+            spv.addLayoutGuide(lg)
+            let constraints = [
+                lg.widthAnchor.constraint(equalTo: spv.widthAnchor, multiplier: p.value / 100),
+                lg.leadingAnchor.constraint(equalTo: spv.leadingAnchor),
+                leadingAnchor.constraint(equalTo: lg.trailingAnchor)
+            ]
+            constraints.forEach { $0.isActive = true }
+        }
+        return self
+    }
+    
+    /** Sets the trailing margin for a view.
+     
+    Example Usage :
+     
+     label.trailing(20)
+     label.trailing(<=20)
+     label.trailing(>=20)
+     label.trailing(20%)
+     
+    - Returns: itself for chaining purposes
+    */
+    @discardableResult
+    func trailing(_ p: SteviaPercentage) -> UIView {
+        
+        // Percent based (multipliers) with leading or trailing attributes
+        // are not available so we introduce an intermediary layout guide.
+        // |-[layoutGuide(== x % width)-[view]
+        // RTL version: [view]-[layoutGuide(== x % width)-|
+        if let spv = superview {
+            let lg = UILayoutGuide()
+            spv.addLayoutGuide(lg)
+            let constraints = [
+                lg.widthAnchor.constraint(equalTo: spv.widthAnchor, multiplier: p.value / 100),
+                lg.trailingAnchor.constraint(equalTo: spv.trailingAnchor),
+                trailingAnchor.constraint(equalTo: lg.leadingAnchor)
+            ]
+            constraints.forEach { $0.isActive = true }
+        }
+        return self
+    }
 }
+#endif

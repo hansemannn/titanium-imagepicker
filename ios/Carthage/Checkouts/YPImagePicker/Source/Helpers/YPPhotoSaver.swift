@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Foundation
 import Photos
 
 public class YPPhotoSaver {
