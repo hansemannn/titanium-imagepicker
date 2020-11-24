@@ -46,7 +46,7 @@ class TiImagepickerModule: TiModule {
     guard let arguments = arguments, let options = arguments[0] as? [String: Any] else { return }
     guard let callback: KrollCallback = options["callback"] as? KrollCallback else { return }
 
-    let forceSquare = options["forceSquare"] as? Bool ?? false
+    let square = options["square"] as? Bool ?? false
     let mode = TiImagePickerMode(rawValue: options["mode"] as? Int ?? 2)
 
     let skipSelectionsGallery = options["skipSelectionsGallery"] as? Bool ?? true
@@ -72,10 +72,10 @@ class TiImagepickerModule: TiModule {
     }
 
     config.shouldSaveNewPicturesToAlbum = false
-    config.onlySquareImagesFromCamera = forceSquare
-    config.library.onlySquare = forceSquare
+    config.onlySquareImagesFromCamera = square
+    config.library.onlySquare = square
+    config.library.isSquareByDefault = square
     config.showsCrop = .none
-    config.targetImageSize = YPImageSize.original
 
     config.library.skipSelectionsGallery = skipSelectionsGallery
     config.library.defaultMultipleSelection = defaultMultipleSelection

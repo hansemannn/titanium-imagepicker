@@ -9,7 +9,7 @@ This started as a parity effort via [@prashantsaini1/titanium-imagepicker](https
 ## Requirements & Installation
 
 - Android: Titanium 7.0.0+
-- iOS: Titanium 8.0.0+
+- iOS: Titanium 9.2.0+
 
 ```
 <module platform="android">ti.imagepicker</module>
@@ -31,7 +31,7 @@ This started as a parity effort via [@prashantsaini1/titanium-imagepicker](https
 | String **cameraTitle**       | Title of the "Photo" button                                                                | Photo                                  | iOS          |
 | String **libraryTitle**      | Title of the "Library" button                                                              | Library                                | iOS          |
 | String **albumsTitle**       | Title of the "Albums" button                                                               | Albums                                 | iOS          |
-| Bool **forceSquare**         | Force images to be squRE                                                                   | `false`                                | iOS          |
+| Bool **square**              | Use square images only                                                                     | `false`                                | iOS          |
 | int **columnCount**          | Number of grid-view columns to show in gallery                                             | 3 (2 to 5 on Android, no limit on iOS) | , iOS        |
 | int **maxImageSelection**    | Maximum number of images to select. Can be used for single image selection by passing as 1 | No limit                               | Android      |
 | function **callback**        | Callback method to get results into. See below example for its usage                       | none                                   | Android, iOS |
