@@ -28,9 +28,9 @@ android/.settings
 android/launch-*
 nbproject
 /metadata.json
-/ios/firebase.core-iphone-*.zip
 /ios/metadata.json
 /android/java-sources.txt
 /ios/dist
 /android/.gradle
 android/gradle/*
+ios/Carthage
