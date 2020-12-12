@@ -9,6 +9,8 @@
 import UIKit
 import TitaniumKit
 import YPImagePicker
+import Photos
+import PhotosUI
 
 enum TiImagePickerMode: Int {
   case library = 0
@@ -18,6 +20,8 @@ enum TiImagePickerMode: Int {
 
 @objc(TiImagepickerModule)
 class TiImagepickerModule: TiModule {
+  
+  private var _iOS14Callback: KrollCallback?
   
   @objc(IMAGE_PICKER_MODE_LIBRARY)
   let IMAGE_PICKER_MODE_LIBRARY = TiImagePickerMode.library.rawValue
@@ -44,10 +48,16 @@ class TiImagepickerModule: TiModule {
   @objc(openGallery:)
   func openGallery(arguments: Array<Any>?) {
     guard let arguments = arguments, let options = arguments[0] as? [String: Any] else { return }
+    let mode = TiImagePickerMode(rawValue: options["mode"] as? Int ?? TiImagePickerMode.all.rawValue)
+
+    if #available(iOS 14.0, *), mode != .photo {
+      openiOS14Gallery(options: options)
+      return
+    }
+    
     guard let callback: KrollCallback = options["callback"] as? KrollCallback else { return }
 
     let square = options["square"] as? Bool ?? false
-    let mode = TiImagePickerMode(rawValue: options["mode"] as? Int ?? 2)
 
     let skipSelectionsGallery = options["skipSelectionsGallery"] as? Bool ?? true
     let showsPhotoFilters = options["showsPhotoFilters"] as? Bool ?? false
@@ -166,7 +176,79 @@ class TiImagepickerModule: TiModule {
     topPresentedController.present(picker, animated: true, completion: nil)
   }
 
+  @available(iOS 14.0, *)
+  private func openiOS14Gallery(options: [String: Any]) {
+    guard let callback: KrollCallback = options["callback"] as? KrollCallback else { return }
+    let maxImageSelection = options["maxImageSelection"] as? Int ?? 25
+    
+    var configuration = PHPickerConfiguration()
+    configuration.filter = .images
+    configuration.selectionLimit = maxImageSelection
+
+    _iOS14Callback = callback
+
+    guard let controller = TiApp.controller(), let topPresentedController = controller.topPresentedController() else {
+      print("[WARN] No window opened. Ignoring gallery call …")
+      return
+    }
+    
+    let picker = PHPickerViewController(configuration: configuration)
+    picker.delegate = self
+    topPresentedController.present(picker, animated: true)
+  }
+  
   private func blob(from image: UIImage) -> TiBlob {
     return TiBlob(image: image)
   }
+  
+  deinit {
+    _iOS14Callback = nil
+  }
 }
+
+// MARK: PHPickerViewControllerDelegate
+
+@available(iOS 14.0, *)
+extension TiImagepickerModule : PHPickerViewControllerDelegate {
+
+  func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+    var images: [TiBlob] = []
+    let group = DispatchGroup()
+    
+    guard let callback = _iOS14Callback else { return }
+
+    for result in results {
+      group.enter()
+      let itemProvider = result.itemProvider
+
+      // Get the reference of itemProvider from results
+      if itemProvider.canLoadObject(ofClass: UIImage.self) {
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self]  image, error in
+          guard let self = self else { return }
+          guard error == nil else {
+            callback.call([["success": false, "images": [], "error": error?.localizedDescription ?? "Eror"]], thisObject: self)
+            group.leave()
+            return
+          }
+          if let image = image as? UIImage {
+            images.append(self.blob(from: image))
+            group.leave()
+          }
+        }
+      }
+    }
+
+    group.notify(queue: .global(qos: .background)) { [weak self] in
+      guard let self = self else { return }
+      TiThreadPerformOnMainThread({
+        picker.dismiss(animated: true) {
+          if let callback = self._iOS14Callback {
+            callback.call([["images": images, "success": true]], thisObject: self)
+            self._iOS14Callback = nil
+          }
+        }
+      }, false)
+    }
+  }
+}
+
