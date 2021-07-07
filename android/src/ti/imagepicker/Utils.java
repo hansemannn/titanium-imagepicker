@@ -1,15 +1,26 @@
 package ti.imagepicker;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.media.ExifInterface;
+import android.provider.OpenableColumns;
 import android.webkit.MimeTypeMap;
+
+import org.appcelerator.kroll.common.Log;
+import org.appcelerator.titanium.TiApplication;
 
 
 public class Utils {
@@ -83,5 +94,94 @@ public class Utils {
             }
         }
         return uri.getPath();
+    }
+
+
+    // CREDITS: https://github.com/zhihu/Matisse/issues/498#issuecomment-430083915
+    public static Bitmap getFixBitMapFromFile(String filePath, int orientation) {
+        File image = new File(filePath);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return bmRotated;
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // CREDITS: https://stackoverflow.com/a/54760434/5537752
+    public static String getFilePath(Uri uri, Context context) {
+        Uri returnUri = uri;
+        Cursor returnCursor = context.getContentResolver().query(returnUri, null, null, null, null);
+        /*
+         * Get the column indexes of the data in the Cursor,
+         *     * move to the first row in the Cursor, get the data,
+         *     * and display it.
+         * */
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+        returnCursor.moveToFirst();
+        String name = (returnCursor.getString(nameIndex));
+        String size = (Long.toString(returnCursor.getLong(sizeIndex)));
+        File file = new File(context.getFilesDir(), name);
+
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            FileOutputStream outputStream = new FileOutputStream(file);
+            int read = 0;
+            int maxBufferSize = 1 * 1024 * 1024;
+            int bytesAvailable = inputStream.available();
+
+            //int bufferSize = 1024;
+            int bufferSize = Math.min(bytesAvailable, maxBufferSize);
+
+            final byte[] buffers = new byte[bufferSize];
+            while ((read = inputStream.read(buffers)) != -1) {
+                outputStream.write(buffers, 0, read);
+            }
+            Log.e("File Size", "Size " + file.length());
+            inputStream.close();
+            outputStream.close();
+            Log.e("File Path", "Path " + file.getPath());
+            Log.e("File Size", "Size " + file.length());
+        } catch (Exception e) {
+            Log.e("Exception", e.getMessage());
+        }
+        return file.getPath();
     }
 }

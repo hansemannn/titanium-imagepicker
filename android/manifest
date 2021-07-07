@@ -2,9 +2,9 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 2.0.0
+version: 3.0.0
 apiversion: 4
-architectures: arm64-v8a armeabi-v7a x86
+architectures: arm64-v8a armeabi-v7a x86 x86_64
 description: titanium-imagepicker
 author: Your Name
 license: Specify your license
@@ -15,4 +15,4 @@ name: titanium-imagepicker
 moduleid: ti.imagepicker
 guid: 19870e10-81f7-463e-8606-aab4d3f0e2e2
 platform: android
-minsdk: 8.0.0
+minsdk: 9.0.0

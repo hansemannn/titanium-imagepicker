@@ -10,7 +10,6 @@ package ti.imagepicker;
 
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
-import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.titanium.TiApplication;
@@ -20,16 +19,10 @@ import org.appcelerator.titanium.TiBlob;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.MediaStore;
-import android.graphics.Bitmap;
 import android.media.ExifInterface;
-import android.database.Cursor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,21 +32,15 @@ import com.zhihu.matisse.Matisse;
 
 @Kroll.module(name="TitaniumImagepicker", id="ti.imagepicker")
 public class TitaniumImagepickerModule extends KrollModule implements TiActivityResultHandler {
-	// Standard Debugging variables
 	private static final String LCAT = "TitaniumImagepickerModule";
-
 	private KrollFunction callback;
 	protected int requestCode;
-	private boolean resultAsBlob;
 
 	@Kroll.method(runOnUiThread = true)
 	public void openGallery(KrollDict args) {
 		callback = (KrollFunction) args.get("callback");
 		
 		int maxImageSelection = args.optInt(Defaults.PROPERTY_MAX_IMAGE_SELECTION, Defaults.VALUE_MAX_IMAGE_SELECTION);
-		
-		// returns the result as TiBlob
-		resultAsBlob = args.optBoolean(Defaults.PROPERTY_RESULT_AS_BLOB, Defaults.VALUE_RESULT_AS_BLOB);
 
 		Activity activity = TiApplication.getInstance().getCurrentActivity();
 		TiActivitySupport support = (TiActivitySupport) activity;
@@ -75,33 +62,31 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 		if (thisRequestCode == requestCode && data != null) {
 			event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, true);
 			event.put(Defaults.CALLBACK_PROPERTY_CANCEL, false);
-			
-			if (resultAsBlob) {
-				final List<Uri> uris = Matisse.obtainResult(data);
-				final ArrayList<TiBlob> blobList = new ArrayList<>();
-				
-				if (uris != null) {
-					final int uriCount = uris.size();
-					
-					for (int i = 0; i < uriCount; i++) {
-						TiBlob image = computeBitmap( uris.get(i) );
-						if (image == null) continue;
-						blobList.add(image);
-					}
+
+			final List<Uri> paths = Matisse.obtainResult(data);
+			final ArrayList<TiBlob> blobList = new ArrayList<>();
+
+			for (Uri url : paths) {
+				ExifInterface exif = null;
+				String realUrl = Utils.getFilePath(url, TiApplication.getInstance().getApplicationContext());
+
+				try {
+					exif = new ExifInterface(realUrl);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				
-				event.put(Defaults.CALLBACK_PROPERTY_IMAGES, blobList.toArray());
-				
-			} else {
-				final List<String> paths = Matisse.obtainPathResult(data);
-				
-				if (paths != null) {
-					event.put(Defaults.CALLBACK_PROPERTY_IMAGES, paths.toArray());
-				} else {
-					event.put(Defaults.CALLBACK_PROPERTY_IMAGES, new Object[0]);
-				}
+
+				int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+				TiBlob blob = TiBlob.blobFromImage(Utils.getFixBitMapFromFile(realUrl, orientation));
+
+				blobList.add(blob);
 			}
-			
+
+			if (paths != null) {
+				event.put(Defaults.CALLBACK_PROPERTY_IMAGES, blobList.toArray());
+			} else {
+				event.put(Defaults.CALLBACK_PROPERTY_IMAGES, new Object[0]);
+			}
 		} else {
 			event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, false);
 			event.put(Defaults.CALLBACK_PROPERTY_CANCEL, true);
@@ -109,53 +94,6 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 		}
 		
 		callback.callAsync(getKrollObject(), event);
-	}
-
-	@TargetApi(Build.VERSION_CODES.ECLAIR)
-	private TiBlob computeBitmap(String url) {
-		ExifInterface exif = null;
-		String realUrl = getRealPathFromURI(Uri.fromFile(new File(url)));
-
-		try {
-			exif = new ExifInterface(realUrl);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		try {
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(TiApplication.getInstance().getContentResolver(), Uri.fromFile(new File(realUrl)));
-
-			bitmap = rotateBitmap(bitmap, orientation);
-			TiBlob blob = TiBlob.blobFromImage(bitmap);
-				
-			if (bitmap != null) {
-				bitmap.recycle();
-				bitmap = null;
-			}
-			
-			return blob;
-			
-		} catch (IOException ex) {
-			Log.d(LCAT, "Cannot receive bitmap at path = " + url + " : exception = " + ex.getLocalizedMessage());
-			
-		} catch (OutOfMemoryError ex) {
-			Log.d(LCAT, "Memory error while decoding image bitmap at path = " + url);
-		}
-
-		return null;
-	}
-
-	public String getRealPathFromURI(Uri contentUri) {
-		String res = null;
-		String[] proj = { MediaStore.Images.Media.DATA };
-		Cursor cursor = TiApplication.getInstance().getContentResolver().query(contentUri, proj, null, null, null);
-		if(cursor != null && cursor.moveToFirst()){;
-		   int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-		   res = cursor.getString(column_index);
-		}
-		cursor.close();
-		return res;
 	}
 
 	@Override
@@ -166,55 +104,5 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 		event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, false);
 		callback.callAsync(getKrollObject(), event);
 	}
-
-	private static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
-		Matrix matrix = new Matrix();
-		
-		switch (orientation) {
-			case ExifInterface.ORIENTATION_NORMAL:
-				return bitmap;
-			case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
-				matrix.setScale(-1, 1);
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_180:
-				matrix.setRotate(180);
-				break;
-			case ExifInterface.ORIENTATION_FLIP_VERTICAL:
-				matrix.setRotate(180);
-				matrix.postScale(-1, 1);
-				break;
-			case ExifInterface.ORIENTATION_TRANSPOSE:
-				matrix.setRotate(90);
-				matrix.postScale(-1, 1);
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_90:
-				matrix.setRotate(90);
-				break;
-			case ExifInterface.ORIENTATION_TRANSVERSE:
-				matrix.setRotate(-90);
-				matrix.postScale(-1, 1);
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_270:
-				matrix.setRotate(-90);
-				break;
-			default:
-				return bitmap;
-		}
-		
-		try {
-			Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-			
-			if (bitmap != null) {
-				bitmap.recycle();
-				bitmap = null;
-			}
-			
-			return bmRotated;
-		} catch (OutOfMemoryError e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 }
 
