@@ -8,7 +8,14 @@ This started as a parity effort via [@prashantsaini1/titanium-imagepicker](https
 
 ## Requirements & Installation
 
-- Android: Titanium 7.0.0+
+- Android:
+  - Titanium 9.0.0+
+  - The following in your `[app]/platform/android/build.gradle` (create if not exists):
+  ```
+  repositories {
+	  maven { url 'https://jitpack.io' }
+  }
+  ```
 - iOS: Titanium 9.2.0+
 
 ```
