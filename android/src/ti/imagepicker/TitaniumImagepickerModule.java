@@ -32,9 +32,10 @@ import com.zhihu.matisse.Matisse;
 
 @Kroll.module(name="TitaniumImagepicker", id="ti.imagepicker")
 public class TitaniumImagepickerModule extends KrollModule implements TiActivityResultHandler {
-	private static final String LCAT = "TitaniumImagepickerModule";
+
 	private KrollFunction callback;
 	protected int requestCode;
+	private List<Uri> paths;
 
 	@Kroll.method(runOnUiThread = true)
 	public void openGallery(KrollDict args) {
@@ -59,40 +60,23 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 		
 		final KrollDict event = new KrollDict();
 
-		if (thisRequestCode == requestCode && data != null) {
-			event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, true);
-			event.put(Defaults.CALLBACK_PROPERTY_CANCEL, false);
-
-			final List<Uri> paths = Matisse.obtainResult(data);
-			final ArrayList<TiBlob> blobList = new ArrayList<>();
-
-			for (Uri url : paths) {
-				ExifInterface exif = null;
-				String realUrl = Utils.getFilePath(url, TiApplication.getInstance().getApplicationContext());
-
-				try {
-					exif = new ExifInterface(realUrl);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-				int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-				TiBlob blob = TiBlob.blobFromImage(Utils.getFixBitMapFromFile(realUrl, orientation));
-
-				blobList.add(blob);
-			}
-
-			if (paths != null) {
-				event.put(Defaults.CALLBACK_PROPERTY_IMAGES, blobList.toArray());
-			} else {
-				event.put(Defaults.CALLBACK_PROPERTY_IMAGES, new Object[0]);
-			}
-		} else {
+		if (thisRequestCode != requestCode || data == null) {
 			event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, false);
 			event.put(Defaults.CALLBACK_PROPERTY_CANCEL, true);
 			event.put(Defaults.CALLBACK_PROPERTY_IMAGES, new Object[0]);
+			return;
 		}
-		
+
+		// Handle success case
+		event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, true);
+		event.put(Defaults.CALLBACK_PROPERTY_CANCEL, false);
+
+		paths = Matisse.obtainResult(data);
+
+		Uri firstResult = paths.get(0);
+		event.put(Defaults.CALLBACK_PROPERTY_IMAGE, blobFromPath(firstResult));
+		event.put("totalImages", paths.size());
+
 		callback.callAsync(getKrollObject(), event);
 	}
 
@@ -103,6 +87,29 @@ public class TitaniumImagepickerModule extends KrollModule implements TiActivity
 		KrollDict event = new KrollDict();
 		event.put(Defaults.CALLBACK_PROPERTY_SUCCESS, false);
 		callback.callAsync(getKrollObject(), event);
+	}
+
+	@Kroll.method
+	public TiBlob consumeImageAtIndex(int index) {
+		if (index + 1 > paths.size()) {
+			paths = null;
+			return null;
+		}
+
+		return blobFromPath(paths.get(index));
+	}
+
+	private TiBlob blobFromPath(Uri path) {
+		try {
+			String realUrl = Utils.getFilePath(path, TiApplication.getInstance().getApplicationContext());
+			ExifInterface exif= new ExifInterface(realUrl);
+			int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+
+			return TiBlob.blobFromImage(Utils.getFixBitMapFromFile(realUrl, orientation));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
 
