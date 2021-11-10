@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:module xmlns:ti="http://ti.appcelerator.org" xmlns:android="http://schemas.android.com/apk/res/android">
 	<android xmlns:android="http://schemas.android.com/apk/res/android">
-	    	<manifest>
-    		<application>
-				<activity android:name="ti.imagepicker.TiMatisseActivity" android:configChanges="screenSize|density" />
-    		</application>
-    	</manifest>
+		<manifest>
+			<application>
+				<activity android:name="ti.imagepicker.TiMatisseActivity" android:exported="true" android:configChanges="screenSize|density" />
+			</application>
+		</manifest>
 	</android>
 </ti:module>
