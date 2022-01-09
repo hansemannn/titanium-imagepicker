@@ -8,7 +8,6 @@
 
 import UIKit
 import TitaniumKit
-import YPImagePicker
 import Photos
 import PhotosUI
 
