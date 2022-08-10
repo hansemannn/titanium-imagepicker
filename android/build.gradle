@@ -5,5 +5,5 @@ repositories {
 dependencies {
 	// We use this fork right now: https://github.com/lwj1994/Matisse
 	// It includes various fixes like empty albums and null-pointer exceptions
-    implementation 'com.github.lwj1994:Matisse:0.5.3-4'
+    implementation 'com.github.lwj1994:Matisse:0.5.3-20220115'
 }
