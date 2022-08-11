@@ -8,20 +8,35 @@ This started as a parity effort via [@prashantsaini1/titanium-imagepicker](https
 
 ## Requirements & Installation
 
-- Android:
-  - Titanium 9.0.0+
-  - The following in your `[app]/platform/android/build.gradle` (create if not exists):
+```xml
+<module platform="android">ti.imagepicker</module>
+<module platform="iphone">ti.imagepicker</module>
+```
+
+#### Android:
+- Titanium 9.0.0+
+- The following in your `[app]/platform/android/build.gradle` (create if not exists):
   ```
   repositories {
 	  maven { url 'https://jitpack.io' }
   }
   ```
-- iOS: Titanium 9.2.0+
 
+* If you don't use a different module that includes Glide (e.g. av.imageview) you have to add it:
 ```
-<module platform="android">ti.imagepicker</module>
-<module platform="iphone">ti.imagepicker</module>
+repositories {
+	mavenCentral()
+	maven { url 'https://jitpack.io' }
+}
+dependencies {
+	implementation 'com.github.bumptech.glide:glide:4.13.2'
+}
 ```
+otherwise it will show "Failed resolution of: Lcom/bumptech/glide/Glide" when opening the imagepicker.
+
+#### iOS:
+* Titanium 9.2.0+
+
 
 # Methods
 
@@ -70,13 +85,13 @@ ImagePicker.openGallery({
 
 go INTO ios folder and install YPImagePicker
 
-```
+```bash
 carthage update
 ```
 
 build the module
 
-```
+```bash
 ti build -p ios --build-only
 ```
 
