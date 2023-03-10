@@ -62,8 +62,9 @@ otherwise it will show "Failed resolution of: Lcom/bumptech/glide/Glide" when op
 | shouldSaveNewPicturesToAlbum | save new pictures to album                                                                 | `false`                                | iOS          |
 | defaultMultipleSelection     | default multiple selection                                                                 | `false`                                | iOS          |
 | enablePhoto                  | enable or disable photo                                                                    | `false`                                | iOS          |
-| minNumberOfItems             | min number of photos                                                                  | 1                                      | iOS          |
-| mode             | image selection mode (IMAGE_PICKER_MODE_ALL, IMAGE_PICKER_MODE_PHOTO, IMAGE_PICKER_MODE_LIBRARY)                                                                 | IMAGE_PICKER_MODE_ALL                                      | iOS          |
+| minNumberOfItems             | min number of photos                                                                       | 1                                      | iOS          |
+| mode                         | image selection mode (IMAGE_PICKER_MODE_ALL | _PHOTO | _LIBRARY                            | IMAGE_PICKER_MODE_ALL                  | iOS          |
+| preSelectItemOnMultipleSelection | Pre-selects the current item on setting multiple selection                             | `true`                                 | iOS          |
 
 ```javascript
 import ImagePicker from 'ti.imagepicker';

@@ -100,6 +100,10 @@ class TiImagepickerModule: TiModule {
     if options["minNumberOfItems"] != nil {
       config.library.minNumberOfItems = options["minNumberOfItems"] as? Int ?? 1
     }
+    
+    if options["preSelectItemOnMultipleSelection"] != nil {
+      config.library.preSelectItemOnMultipleSelection = options["preSelectItemOnMultipleSelection"] as? Bool ?? true
+    }
 
     if options["doneButtonTitle"] != nil {
       config.wordings.done = options["doneButtonTitle"] as! String
