@@ -9,6 +9,8 @@ import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
 
+import org.appcelerator.kroll.common.Log;
+
 
 public class TiMatisseActivity extends Activity {		
     @Override
@@ -19,11 +21,12 @@ public class TiMatisseActivity extends Activity {
         Bundle extras = i.getExtras();
         
         int maxImageSelection = extras.getInt(Defaults.PROPERTY_MAX_IMAGE_SELECTION);
+        String provider = getApplicationContext().getPackageName() + ".provider";
         
         Matisse.from(this)
             .choose(MimeType.ofImage())
             .capture(true)
-            .captureStrategy(new CaptureStrategy(true, "io.lambus.app.provider"))
+            .captureStrategy(new CaptureStrategy(true, provider))
             .countable(true)
             .maxSelectable(maxImageSelection)
             .thumbnailScale(0.80f)

@@ -39,11 +39,6 @@ class TiImagepickerModule: TiModule {
     return "ti.imagepicker"
   }
 
-  override func startup() {
-    super.startup()
-    debugPrint("[DEBUG] \(self) loaded")
-  }
-
   @objc(openGallery:)
   func openGallery(arguments: Array<Any>?) {
     guard let arguments = arguments, let options = arguments[0] as? [String: Any] else { return }
